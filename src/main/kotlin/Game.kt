@@ -32,7 +32,7 @@ class Game {
         ship.position = Vector2(width.value / 2.0, height.value / 2.0)
         ship.movementVector = Vector2.ZERO
         gameObjects.add(ship)
-        repeat(3) {
+        repeat(3) { // TODO CAMBIAR Y AÑADIR BOTON DIFICULTAD
             gameObjects.add(AsteroidData().apply {
                 position = Vector2(100.0, 100.0); angle = Random.nextDouble() * 360.0; speed = 2.0
             })
