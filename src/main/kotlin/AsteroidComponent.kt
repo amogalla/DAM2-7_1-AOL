@@ -25,7 +25,7 @@ fun Asteroid(asteroidData: AsteroidData) {
             .size(asteroidSize)
             .rotate(asteroidData.angle.toFloat())
             .clip(CircleShape)
-            .background(Color(102, 102, 153))
+            .background(Color.Transparent)
     )
     {
         Canvas(modifier = Modifier.fillMaxSize(), onDraw = {
