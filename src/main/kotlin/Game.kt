@@ -32,11 +32,17 @@ class Game {
         ship.position = Vector2(width.value / 2.0, height.value / 2.0)
         ship.movementVector = Vector2.ZERO
         gameObjects.add(ship)
-        repeat(3) { // TODO CAMBIAR Y AÑADIR BOTON DIFICULTAD
-            gameObjects.add(AsteroidData().apply {
-                position = Vector2(100.0, 100.0); angle = Random.nextDouble() * 360.0; speed = 2.0
-            })
-        }
+
+        //Añadimos un asteroide
+        gameObjects.add(AsteroidData().apply {
+            position = Vector2(100.0, 100.0); angle = Random.nextDouble() * 360.0; speed = 2.0
+        })
+
+        //Añadimos un alien de Los Simpson's
+        gameObjects.add(SimpsonAlienData().apply {
+            position = Vector2(100.0, 100.0); angle = Random.nextDouble() * 360.0; speed = 2.0
+        })
+
         gameState = GameState.RUNNING
         gameStatus = "Good luck!"
     }
@@ -68,6 +74,7 @@ class Game {
         }
         val asteroids = gameObjects.filterIsInstance<AsteroidData>()
 
+
         // Bullet <-> Asteroid interaction
         asteroids.forEach { asteroid ->
             val least = bullets.firstOrNull { it.overlapsWith(asteroid) } ?: return@forEach
@@ -91,6 +98,33 @@ class Game {
         if (asteroids.any { asteroid -> ship.overlapsWith(asteroid) }) {
             endGame()
         }
+
+
+        val aliens = gameObjects.filterIsInstance<SimpsonAlienData>()
+        // Bullet <-> SimpsonAlien interaction
+        aliens.forEach { alien ->
+            val least = bullets.firstOrNull { it.overlapsWith(alien) } ?: return@forEach
+            if (alien.position.distanceTo(least.position) < alien.size) {
+                gameObjects.remove(alien)
+                gameObjects.remove(least)
+
+                if (alien.size < 50.0) return@forEach
+                // it's still pretty big, let's spawn some smaller ones
+                repeat(2) {
+                    gameObjects.add(AsteroidData(alien.speed * 2,
+                        Random.nextDouble() * 360.0,
+                        alien.position).apply {
+                        size = alien.size / 2
+                    })
+                }
+            }
+        }
+
+        // SimpsonAlien <-> Ship interaction
+        if (aliens.any { alien -> ship.overlapsWith(alien) }) {
+            endGame()
+        }
+
 
         // Win condition
         if (asteroids.isEmpty()) {

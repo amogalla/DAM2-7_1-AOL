@@ -14,7 +14,12 @@ class ShipData : GameObject() {
     }
 }
 
-class AsteroidData(speed: Double = 0.0, angle: Double = 0.0, position: Vector2 = Vector2.ZERO) :
+ class AsteroidData(speed: Double = 0.0, angle: Double = 0.0, position: Vector2 = Vector2.ZERO) :
+    GameObject(speed, angle, position) {
+    override var size: Double = 120.0
+}
+
+class SimpsonAlienData(speed: Double = 0.0, angle: Double = 0.0, position: Vector2 = Vector2.ZERO) :
     GameObject(speed, angle, position) {
     override var size: Double = 120.0
 }
