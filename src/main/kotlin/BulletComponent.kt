@@ -16,9 +16,9 @@ fun Bullet(bulletData: BulletData) {
     Box(
         Modifier
             .offset(bulletData.xOffset, bulletData.yOffset)
-            .size(bulletSize)
+            .size(bulletSize * 2)
             .rotate(bulletData.angle.toFloat())
             .clip(CircleShape)
-            .background(Color.Cyan)
+            .background(Color.Red)
     )
 }
