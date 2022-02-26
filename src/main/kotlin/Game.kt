@@ -32,6 +32,8 @@ class Game {
     var vidasFinalBoss:Int = 11
 
     fun startGame() {
+        finalBossEliminado = false
+        vidasFinalBoss = 11
         gameObjects.clear()
         ship.position = Vector2(width.value / 2.0, height.value / 2.0)
         ship.movementVector = Vector2.ZERO
@@ -156,15 +158,7 @@ class Game {
         })
 
         contadorFinalBossVisible = true
-        //vidasFinalBoss--
-        /*val bullets = gameObjects.filterIsInstance<BulletData>()
-        var vidasFinalBoss = 3
-        val finalBoss = gameObjects.filterIsInstance<FinalBossData>()*/
-
-
-
-
-    }
+}
 
 
     fun endGame() {
