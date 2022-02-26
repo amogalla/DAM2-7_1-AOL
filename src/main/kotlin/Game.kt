@@ -24,7 +24,6 @@ class Game {
     var targetLocation by mutableStateOf<DpOffset>(DpOffset.Zero)
 
     var gameObjects = mutableStateListOf<GameObject>()
-    var gameEnemies = mutableStateListOf<GameObject>()
     var gameState by mutableStateOf(GameState.RUNNING)
     var gameStatus by mutableStateOf("Let's play!")
 
