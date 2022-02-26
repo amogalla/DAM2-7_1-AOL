@@ -24,6 +24,7 @@ class Game {
     var targetLocation by mutableStateOf<DpOffset>(DpOffset.Zero)
 
     var gameObjects = mutableStateListOf<GameObject>()
+    var gameEnemies = mutableStateListOf<GameObject>()
     var gameState by mutableStateOf(GameState.RUNNING)
     var gameStatus by mutableStateOf("Let's play!")
 
@@ -42,6 +43,7 @@ class Game {
         gameObjects.add(SimpsonAlienData().apply {
             position = Vector2(100.0, 100.0); angle = Random.nextDouble() * 360.0; speed = 2.0
         })
+
 
         gameState = GameState.RUNNING
         gameStatus = "Good luck!"
@@ -65,66 +67,55 @@ class Game {
             gameObject.update(floatDelta, this)
         }
 
-
         val bullets = gameObjects.filterIsInstance<BulletData>()
 
         // Limit number of bullets at the same time
         if (bullets.count() > 3) {
             gameObjects.remove(bullets.first())
         }
+
         val asteroids = gameObjects.filterIsInstance<AsteroidData>()
-
-
-        // Bullet <-> Asteroid interaction
-        asteroids.forEach { asteroid ->
-            val least = bullets.firstOrNull { it.overlapsWith(asteroid) } ?: return@forEach
-            if (asteroid.position.distanceTo(least.position) < asteroid.size) {
-                gameObjects.remove(asteroid)
-                gameObjects.remove(least)
-
-                if (asteroid.size < 50.0) return@forEach
-                // it's still pretty big, let's spawn some smaller ones
-                repeat(2) {
-                    gameObjects.add(AsteroidData(asteroid.speed * 2,
-                        Random.nextDouble() * 360.0,
-                        asteroid.position).apply {
-                        size = asteroid.size / 2
-                    })
-                }
-            }
-        }
-
-        // Asteroid <-> Ship interaction
-        if (asteroids.any { asteroid -> ship.overlapsWith(asteroid) }) {
-            endGame()
-        }
-
-
         val aliens = gameObjects.filterIsInstance<SimpsonAlienData>()
-        // Bullet <-> SimpsonAlien interaction
-        aliens.forEach { alien ->
-            val least = bullets.firstOrNull { it.overlapsWith(alien) } ?: return@forEach
-            if (alien.position.distanceTo(least.position) < alien.size) {
-                gameObjects.remove(alien)
+
+        val listaEnemigos: MutableList<EnemyData> = asteroids.toMutableList()
+        listaEnemigos.addAll(aliens.toMutableList())
+
+        // Bullet <-> Enemy interaction
+        (listaEnemigos).forEach { enemy ->
+            val least = bullets.firstOrNull { it.overlapsWith(enemy) } ?: return@forEach
+            if (enemy.position.distanceTo(least.position) < enemy.size) {
+                gameObjects.remove(enemy)
                 gameObjects.remove(least)
 
-                if (alien.size < 50.0) return@forEach
+                if (enemy.size < 50.0) return@forEach
                 // it's still pretty big, let's spawn some smaller ones
                 repeat(2) {
-                    gameObjects.add(AsteroidData(alien.speed * 2,
-                        Random.nextDouble() * 360.0,
-                        alien.position).apply {
-                        size = alien.size / 2
-                    })
+                    if (enemy is AsteroidData) {
+                        gameObjects.add(AsteroidData(
+                            enemy.speed * 2,
+                            Random.nextDouble() * 360.0,
+                            enemy.position
+                        ).apply {
+                            size = enemy.size / 2
+                        })
+                    }
+                    if (enemy is SimpsonAlienData) {
+                        gameObjects.add(SimpsonAlienData(
+                            enemy.speed * 2,
+                            Random.nextDouble() * 360.0,
+                            enemy.position
+                        ).apply {
+                            size = enemy.size / 2
+                        })
+                    }
                 }
             }
         }
 
-        // SimpsonAlien <-> Ship interaction
-        if (aliens.any { alien -> ship.overlapsWith(alien) }) {
+        // Enemy <-> Ship interaction
+        if (listaEnemigos.any { asteroid -> ship.overlapsWith(asteroid) }) {
             endGame()
         }
-
 
         // Win condition
         if (asteroids.isEmpty()) {
