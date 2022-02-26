@@ -21,6 +21,7 @@ class Game {
     var prevTime = 0L
     val ship = ShipData()
     var finalBossEliminado: Boolean = false
+    var contadorFinalBossVisible: Boolean = false
 
     var targetLocation by mutableStateOf<DpOffset>(DpOffset.Zero)
 
@@ -28,7 +29,7 @@ class Game {
     var gameState by mutableStateOf(GameState.RUNNING)
     var gameStatus by mutableStateOf("Let's play!")
 
-    var vidasFinalBoss:Int = 3
+    var vidasFinalBoss:Int = 11
 
     fun startGame() {
         gameObjects.clear()
@@ -124,12 +125,8 @@ class Game {
                     if (enemy is FinalBossData) {
                         // Bullet <-> FinalBoss interaction
                         if (enemy.position.distanceTo(least.position) < enemy.size) {
-                            //gameObjects.remove(enemy)
                             gameObjects.remove(least)
-                            print(vidasFinalBoss)
-                            if (vidasFinalBoss > 0){
-                            }
-                                vidasFinalBoss--
+                            vidasFinalBoss--
                             if (vidasFinalBoss <= 0) {
                                 finalBossEliminado = true
                                 gameObjects.remove(enemy)
@@ -147,11 +144,6 @@ class Game {
         }
 
         // Win LEVEL 1 condition
-        /*if (listaEnemigosTotales.isEmpty() && !finalBossEliminado) {
-            showFinalBoss()
-        }*/
-
-        // Win FINAL condition
         if (listaEnemigosTotales.isEmpty() && !finalBossEliminado) {
             showFinalBoss()
         }
@@ -162,6 +154,9 @@ class Game {
         gameObjects.add(FinalBossData().apply {
             position = Vector2(100.0, 100.0); angle = Random.nextDouble() * 360.0; speed = 2.0
         })
+
+        contadorFinalBossVisible = true
+        //vidasFinalBoss--
         /*val bullets = gameObjects.filterIsInstance<BulletData>()
         var vidasFinalBoss = 3
         val finalBoss = gameObjects.filterIsInstance<FinalBossData>()*/
