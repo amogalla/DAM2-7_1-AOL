@@ -17,22 +17,22 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun SimpsonAlien(asteroidData: AsteroidData) {
-    val asteroidSize = asteroidData.size.dp
+fun SimpsonAlien(simpsonAlienDataData: SimpsonAlienData) {
+    val simpsonAlienSize = simpsonAlienDataData.size.dp
     Box(
         Modifier
-            .offset(asteroidData.xOffset, asteroidData.yOffset)
-            .size(asteroidSize)
-            .rotate(asteroidData.angle.toFloat())
+            .offset(simpsonAlienDataData.xOffset, simpsonAlienDataData.yOffset)
+            .size(simpsonAlienSize)
+            .rotate(simpsonAlienDataData.angle.toFloat())
             .clip(CircleShape)
-            .background(Color(102, 102, 153))
+            .background(Color.Transparent)
     )
     {
         Canvas(modifier = Modifier.fillMaxSize(), onDraw = {
             drawPath(
                 color = Color.Transparent,
                 path = Path().apply {
-                    val size = asteroidSize.toPx()
+                    val size = simpsonAlienSize.toPx()
                     moveTo(0f, 0f) // Top-left corner...
                     lineTo(size, size / 2f) // ...to right-center...
                     lineTo(0f, size) // ... to bottom-left corner.
