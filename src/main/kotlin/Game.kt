@@ -20,12 +20,15 @@ fun Vector2.angle(): Double {
 class Game {
     var prevTime = 0L
     val ship = ShipData()
+    var finalBossEliminado: Boolean = false
 
     var targetLocation by mutableStateOf<DpOffset>(DpOffset.Zero)
 
     var gameObjects = mutableStateListOf<GameObject>()
     var gameState by mutableStateOf(GameState.RUNNING)
     var gameStatus by mutableStateOf("Let's play!")
+
+    var vidasFinalBoss:Int = 3
 
     fun startGame() {
         gameObjects.clear()
@@ -43,7 +46,6 @@ class Game {
             position = Vector2(100.0, 100.0); angle = Random.nextDouble() * 360.0; speed = 2.0
         })
 
-
         gameState = GameState.RUNNING
         gameStatus = "Good luck!"
     }
@@ -59,6 +61,8 @@ class Game {
         val shipToCursor = cursorVector - ship.position
         val angle = atan2(y = shipToCursor.y, x = shipToCursor.x)
 
+        val bullets = gameObjects.filterIsInstance<BulletData>()
+
         ship.visualAngle = shipToCursor.angle()
         ship.movementVector = ship.movementVector + (shipToCursor.normalized * floatDelta.toDouble())
 
@@ -66,7 +70,6 @@ class Game {
             gameObject.update(floatDelta, this)
         }
 
-        val bullets = gameObjects.filterIsInstance<BulletData>()
 
         // Limit number of bullets at the same time
         if (bullets.count() > 3) {
@@ -75,20 +78,29 @@ class Game {
 
         val asteroids = gameObjects.filterIsInstance<AsteroidData>()
         val aliens = gameObjects.filterIsInstance<SimpsonAlienData>()
+        val finalBoss = gameObjects.filterIsInstance<FinalBossData>()
 
-        val listaEnemigos: MutableList<EnemyData> = asteroids.toMutableList()
-        listaEnemigos.addAll(aliens.toMutableList())
+        val listaEnemigosNivel1: MutableList<EnemyData> = asteroids.toMutableList()
+        listaEnemigosNivel1.addAll(aliens.toMutableList())
+
+        val listaEnemigosTotales:MutableList<EnemyData> = asteroids.toMutableList()
+        listaEnemigosTotales.addAll(aliens.toMutableList())
+        listaEnemigosTotales.addAll(finalBoss.toMutableList())
 
         // Bullet <-> Enemy interaction
-        (listaEnemigos).forEach { enemy ->
+        (listaEnemigosTotales).forEach { enemy ->
             val least = bullets.firstOrNull { it.overlapsWith(enemy) } ?: return@forEach
             if (enemy.position.distanceTo(least.position) < enemy.size) {
-                gameObjects.remove(enemy)
-                gameObjects.remove(least)
+
+                if(enemy !is FinalBossData) {
+                    gameObjects.remove(enemy)
+                    gameObjects.remove(least)
+                }
 
                 if (enemy.size < 50.0) return@forEach
                 // it's still pretty big, let's spawn some smaller ones
-                repeat(2) {
+                repeat(1) {
+
                     if (enemy is AsteroidData) {
                         gameObjects.add(AsteroidData(
                             enemy.speed * 2,
@@ -98,6 +110,7 @@ class Game {
                             size = enemy.size / 2
                         })
                     }
+
                     if (enemy is SimpsonAlienData) {
                         gameObjects.add(SimpsonAlienData(
                             enemy.speed * 2,
@@ -107,20 +120,57 @@ class Game {
                             size = enemy.size / 2
                         })
                     }
+
+                    if (enemy is FinalBossData) {
+                        // Bullet <-> FinalBoss interaction
+                        if (enemy.position.distanceTo(least.position) < enemy.size) {
+                            //gameObjects.remove(enemy)
+                            gameObjects.remove(least)
+                            print(vidasFinalBoss)
+                            if (vidasFinalBoss > 0){
+                            }
+                                vidasFinalBoss--
+                            if (vidasFinalBoss <= 0) {
+                                finalBossEliminado = true
+                                gameObjects.remove(enemy)
+                                winGame()
+                            }
+                        }
+                    }
                 }
             }
         }
 
         // Enemy <-> Ship interaction
-        if (listaEnemigos.any { asteroid -> ship.overlapsWith(asteroid) }) {
+        if (listaEnemigosTotales.any { asteroid -> ship.overlapsWith(asteroid) }) {
             endGame()
         }
 
-        // Win condition
-        if (listaEnemigos.isEmpty()) {
-            winGame()
+        // Win LEVEL 1 condition
+        /*if (listaEnemigosTotales.isEmpty() && !finalBossEliminado) {
+            showFinalBoss()
+        }*/
+
+        // Win FINAL condition
+        if (listaEnemigosTotales.isEmpty() && !finalBossEliminado) {
+            showFinalBoss()
         }
     }
+
+    fun showFinalBoss(){
+        //Añadimos un finalBoss
+        gameObjects.add(FinalBossData().apply {
+            position = Vector2(100.0, 100.0); angle = Random.nextDouble() * 360.0; speed = 2.0
+        })
+        /*val bullets = gameObjects.filterIsInstance<BulletData>()
+        var vidasFinalBoss = 3
+        val finalBoss = gameObjects.filterIsInstance<FinalBossData>()*/
+
+
+
+
+    }
+
 
     fun endGame() {
         gameObjects.remove(ship)

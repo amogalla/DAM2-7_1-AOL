@@ -29,6 +29,11 @@ class SimpsonAlienData(speed: Double = 0.0, angle: Double = 0.0, position: Vecto
     override var size: Double = 120.0
 }
 
+class FinalBossData(speed: Double = 0.0, angle: Double = 0.0, position: Vector2 = Vector2.ZERO) :
+    EnemyData(speed, angle, position) {
+    override var size: Double = 120.0
+}
+
 class BulletData(speed: Double = 0.0, angle: Double = 0.0, position: Vector2 = Vector2.ZERO) :
     GameObject(speed, angle, position) {
     override val size: Double = 4.0
