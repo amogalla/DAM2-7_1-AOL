@@ -117,7 +117,7 @@ class Game {
         }
 
         // Win condition
-        if (asteroids.isEmpty()) {
+        if (listaEnemigos.isEmpty()) {
             winGame()
         }
     }
