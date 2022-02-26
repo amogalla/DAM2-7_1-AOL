@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 fun main() = Window(size = IntSize(800, 900), title = "Asteroids for Desktop") {
     val game = remember { Game() }
     val density = LocalDensity.current
+    var textoVidasBoss = ""
     LaunchedEffect(Unit) {
         while (true) {
             withFrameNanos {
@@ -37,6 +38,9 @@ fun main() = Window(size = IntSize(800, 900), title = "Asteroids for Desktop") {
                 Text("Play")
             }
             Text(game.gameStatus, modifier = Modifier.align(Alignment.CenterVertically).padding(horizontal = 16.dp), color = Color.White)
+            if(game.vidasFinalBoss <= 10) textoVidasBoss = "Vidas final boss: ${game.vidasFinalBoss}"
+            else textoVidasBoss = ""
+            Text(textoVidasBoss, modifier = Modifier.align(Alignment.CenterVertically).padding(horizontal = 16.dp), color = Color.White)
         }
         Box(modifier = Modifier
             .aspectRatio(1.0f)
@@ -50,7 +54,7 @@ fun main() = Window(size = IntSize(800, 900), title = "Asteroids for Desktop") {
                 .clipToBounds()
                 .pointerMoveFilter(onMove = {
                     with(density) {
-                        game.targetLocation  = DpOffset(it.x.toDp(), it.y.toDp())
+                        game.targetLocation = DpOffset(it.x.toDp(), it.y.toDp())
                     }
                     false
                 })
