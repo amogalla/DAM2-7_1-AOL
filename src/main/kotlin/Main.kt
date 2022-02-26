@@ -69,6 +69,7 @@ fun main() = Window(size = IntSize(800, 900), title = "Asteroids for Desktop") {
                         is BulletData -> Bullet(it)
                         is AsteroidData -> Asteroid(it)
                         is SimpsonAlienData -> SimpsonAlien(it)
+                        is FinalBossData -> FinalBoss(it)
                     }
                 }
             }
