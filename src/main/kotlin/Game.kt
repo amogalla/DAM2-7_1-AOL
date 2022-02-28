@@ -73,7 +73,6 @@ class Game {
             gameObject.update(floatDelta, this)
         }
 
-
         // Limit number of bullets at the same time
         if (bullets.count() > 3) {
             gameObjects.remove(bullets.first())
@@ -82,9 +81,6 @@ class Game {
         val asteroids = gameObjects.filterIsInstance<AsteroidData>()
         val aliens = gameObjects.filterIsInstance<SimpsonAlienData>()
         val finalBoss = gameObjects.filterIsInstance<FinalBossData>()
-
-        val listaEnemigosNivel1: MutableList<EnemyData> = asteroids.toMutableList()
-        listaEnemigosNivel1.addAll(aliens.toMutableList())
 
         val listaEnemigosTotales:MutableList<EnemyData> = asteroids.toMutableList()
         listaEnemigosTotales.addAll(aliens.toMutableList())
@@ -102,41 +98,44 @@ class Game {
 
                 if (enemy.size < 50.0) return@forEach
                 // it's still pretty big, let's spawn some smaller ones
-                repeat(1) {
-
-                    if (enemy is AsteroidData) {
-                        gameObjects.add(AsteroidData(
-                            enemy.speed * 2,
-                            Random.nextDouble() * 360.0,
-                            enemy.position
-                        ).apply {
-                            size = enemy.size / 2
-                        })
-                    }
-
-                    if (enemy is SimpsonAlienData) {
-                        gameObjects.add(SimpsonAlienData(
-                            enemy.speed * 2,
-                            Random.nextDouble() * 360.0,
-                            enemy.position
-                        ).apply {
-                            size = enemy.size / 2
-                        })
-                    }
-
-                    if (enemy is FinalBossData) {
-                        // Bullet <-> FinalBoss interaction
-                        if (enemy.position.distanceTo(least.position) < enemy.size) {
-                            gameObjects.remove(least)
-                            vidasFinalBoss--
-                            if (vidasFinalBoss <= 0) {
-                                finalBossEliminado = true
-                                gameObjects.remove(enemy)
-                                winGame()
+                    when(enemy){
+                        is AsteroidData ->
+                            repeat(2) {
+                                gameObjects.add(AsteroidData(
+                                    enemy.speed * 2,
+                                    Random.nextDouble() * 360.0,
+                                    enemy.position
+                                ).apply {
+                                    size = enemy.size / 2
+                                })
                             }
-                        }
+
+
+                        is SimpsonAlienData ->
+                            repeat(2) {
+                                gameObjects.add(SimpsonAlienData(
+                                    enemy.speed * 2,
+                                    Random.nextDouble() * 360.0,
+                                    enemy.position
+                                ).apply {
+                                    size = enemy.size / 2
+                                })
+                            }
+
+
+                        is FinalBossData ->
+                            // Bullet <-> FinalBoss interaction
+                            if (enemy.position.distanceTo(least.position) < enemy.size) {
+                                gameObjects.remove(least)
+                                vidasFinalBoss--
+                                if (vidasFinalBoss <= 0) {
+                                    finalBossEliminado = true
+                                    gameObjects.remove(enemy)
+                                    winGame()
+                                }
+                            }
                     }
-                }
+
             }
         }
 
