@@ -98,7 +98,7 @@ class Game {
 
                 if (enemy.size < 50.0) return@forEach
                 // it's still pretty big, let's spawn some smaller ones
-                repeat(1) {
+                repeat(2) {
 
                     if (enemy is AsteroidData) {
                         gameObjects.add(AsteroidData(
