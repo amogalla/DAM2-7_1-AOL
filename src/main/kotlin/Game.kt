@@ -73,7 +73,6 @@ class Game {
             gameObject.update(floatDelta, this)
         }
 
-
         // Limit number of bullets at the same time
         if (bullets.count() > 3) {
             gameObjects.remove(bullets.first())
@@ -82,9 +81,6 @@ class Game {
         val asteroids = gameObjects.filterIsInstance<AsteroidData>()
         val aliens = gameObjects.filterIsInstance<SimpsonAlienData>()
         val finalBoss = gameObjects.filterIsInstance<FinalBossData>()
-
-        val listaEnemigosNivel1: MutableList<EnemyData> = asteroids.toMutableList()
-        listaEnemigosNivel1.addAll(aliens.toMutableList())
 
         val listaEnemigosTotales:MutableList<EnemyData> = asteroids.toMutableList()
         listaEnemigosTotales.addAll(aliens.toMutableList())
